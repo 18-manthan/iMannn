@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import Navigation from './components/Navigation'
 import Footer from './components/Footer'
+import ScrollToTop from './components/ScrollToTop'
 import HomePage from './pages/HomePage'
 import ServicesPage from './pages/ServicesPage'
 import PortfolioPage from './pages/PortfolioPage'
@@ -15,6 +16,7 @@ function App() {
 
   return (
     <Router>
+      <ScrollToTop />
       <div className="min-h-screen bg-dark overflow-x-hidden">
         <Navigation />
         <PageTransition isLoading={isLoading}>

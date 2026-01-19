@@ -220,33 +220,36 @@ function TimelineSection() {
 function TeamSection() {
   const team = [
     {
-      name: 'Alex Morgan',
-      role: 'Founder & Creative Director',
+      name: 'Manoj Chouhan',
+      role: 'Founder',
       image: 'https://picsum.photos/400/400?random=15',
+    },
+    {
+      name: 'Manthan Chouhan',
+      role: 'CEO',
+      image: 'https://picsum.photos/400/400?random=16',
+      email: 'manthanchouhan18@gmail.com',
+      linkedin: 'https://in.linkedin.com/in/manthan-chouhan-35ba4b220',
+      phone: '+91 9009855911'
     },
     {
       name: 'Sarah Chen',
       role: 'Lead Designer',
-      image: 'https://picsum.photos/400/400?random=16',
+      image: 'https://picsum.photos/400/400?random=17',
     },
     {
       name: 'James Williams',
       role: 'Tech Lead',
-      image: 'https://picsum.photos/400/400?random=17',
+      image: 'https://picsum.photos/400/400?random=18',
     },
     {
       name: 'Maria Garcia',
       role: 'Product Manager',
-      image: 'https://picsum.photos/400/400?random=18',
+      image: 'https://picsum.photos/400/400?random=19'
     },
     {
       name: 'David Lee',
       role: 'Full-Stack Developer',
-      image: 'https://picsum.photos/400/400?random=19'
-    },
-    {
-      name: 'Emma Watson',
-      role: 'UI/UX Specialist',
       image: 'https://picsum.photos/400/400?random=20'
     }
   ]

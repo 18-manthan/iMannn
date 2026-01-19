@@ -15,7 +15,7 @@ export default function Footer() {
 
   const socialLinks = [
     { name: 'Twitter', url: '#' },
-    { name: 'LinkedIn', url: '#' },
+    { name: 'LinkedIn', url: 'https://in.linkedin.com/in/manthan-chouhan-35ba4b220' },
     { name: 'Instagram', url: '#' },
     { name: 'GitHub', url: '#' }
   ]

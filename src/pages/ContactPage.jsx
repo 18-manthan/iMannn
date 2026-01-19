@@ -10,19 +10,84 @@ export default function ContactPage({ setIsLoading }) {
   })
 
   const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   const handleChange = (e) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    setSubmitted(true)
-    setTimeout(() => {
-      setFormData({ name: '', email: '', company: '', message: '' })
-      setSubmitted(false)
-    }, 3000)
+    setLoading(true)
+    setError(false)
+
+    try {
+      // Validate form
+      if (!formData.name || !formData.email || !formData.message) {
+        setError(true)
+        setLoading(false)
+        setTimeout(() => setError(false), 3000)
+        return
+      }
+
+      // Send via Discord Webhook (as backup storage)
+      const webhookUrl = 'https://discord.com/api/webhooks/1324567890123456789/xXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXx'
+      
+      const embed = {
+        title: '📬 New Contact Form Submission',
+        color: 65280,
+        fields: [
+          { name: 'Name', value: formData.name, inline: true },
+          { name: 'Email', value: formData.email, inline: true },
+          { name: 'Company', value: formData.company || 'Not specified', inline: true },
+          { name: 'Message', value: formData.message || 'No message' }
+        ],
+        timestamp: new Date().toISOString()
+      }
+
+      // Try webhook
+      try {
+        await fetch(webhookUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ embeds: [embed] })
+        })
+      } catch (e) {
+        console.log('Webhook backup noted')
+      }
+
+      // Primary: Send via FormSubmit (completely free, no auth needed)
+      const formSubmitData = new FormData()
+      formSubmitData.append('name', formData.name)
+      formSubmitData.append('email', formData.email)
+      formSubmitData.append('company', formData.company)
+      formSubmitData.append('message', formData.message)
+      formSubmitData.append('_captcha', 'false')
+      formSubmitData.append('_next', window.location.href)
+
+      const response = await fetch('https://formsubmit.co/manthanchouhan18@gmail.com', {
+        method: 'POST',
+        body: formSubmitData
+      })
+
+      if (response.ok) {
+        setSubmitted(true)
+        setTimeout(() => {
+          setFormData({ name: '', email: '', company: '', message: '' })
+          setSubmitted(false)
+        }, 3000)
+      } else {
+        throw new Error('Form submission failed')
+      }
+    } catch (err) {
+      console.error('Form error:', err)
+      setError(true)
+      setTimeout(() => setError(false), 5000)
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -31,7 +96,14 @@ export default function ContactPage({ setIsLoading }) {
       <HeroSection />
 
       {/* Contact Form & Info */}
-      <ContactSection formData={formData} handleChange={handleChange} handleSubmit={handleSubmit} submitted={submitted} />
+      <ContactSection 
+        formData={formData} 
+        handleChange={handleChange} 
+        handleSubmit={handleSubmit} 
+        submitted={submitted}
+        error={error}
+        loading={loading}
+      />
 
       {/* Map & Locations */}
       <LocationsSection />
@@ -82,7 +154,7 @@ function HeroSection() {
   )
 }
 
-function ContactSection({ formData, handleChange, handleSubmit, submitted }) {
+function ContactSection({ formData, handleChange, handleSubmit, submitted, error, loading }) {
   return (
     <section className="py-24 bg-dark relative">
       <div className="max-w-7xl mx-auto px-6">
@@ -99,33 +171,34 @@ function ContactSection({ formData, handleChange, handleSubmit, submitted }) {
             <div className="space-y-8">
               <div>
                 <h3 className="text-sm font-semibold text-accent mb-2 uppercase">Email</h3>
-                <a href="mailto:hello@imann.agency" className="text-lg hover:text-accent transition-colors">
-                  hello@imann.agency
+                <a href="mailto:manthanchouhan18@gmail.com" className="text-lg hover:text-accent transition-colors">
+                  manthanchouhan18@gmail.com
                 </a>
               </div>
 
               <div>
                 <h3 className="text-sm font-semibold text-accent mb-2 uppercase">Phone</h3>
-                <a href="tel:+1234567890" className="text-lg hover:text-accent transition-colors">
-                  +1 (555) 123-4567
+                <a href="tel:+919009855911" className="text-lg hover:text-accent transition-colors">
+                  +91 9009855911
                 </a>
               </div>
 
               <div>
                 <h3 className="text-sm font-semibold text-accent mb-2 uppercase">Headquarters</h3>
                 <p className="text-gray-400">
-                  123 Creative Street<br />
-                  New York, NY 10001<br />
-                  United States
+                  MIG Colony, B159 Ground Floor<br />
+                  Indore<br />
+                  India
                 </p>
               </div>
 
               <div>
-                <h3 className="text-sm font-semibold text-accent mb-2 uppercase">Other Offices</h3>
+                <h3 className="text-sm font-semibold text-accent mb-2 uppercase">CEO</h3>
                 <p className="text-gray-400">
-                  San Francisco, CA<br />
-                  London, UK<br />
-                  Tokyo, Japan
+                  Manthan Chouhan<br />
+                  <a href="https://in.linkedin.com/in/manthan-chouhan-35ba4b220" target="_blank" rel="noopener noreferrer" className="text-accent hover:text-accent-hover transition-colors">
+                    LinkedIn Profile
+                  </a>
                 </p>
               </div>
 
@@ -135,7 +208,9 @@ function ContactSection({ formData, handleChange, handleSubmit, submitted }) {
                   {['Twitter', 'LinkedIn', 'Instagram', 'GitHub'].map((social, idx) => (
                     <motion.a
                       key={idx}
-                      href="#"
+                      href={social === 'LinkedIn' ? 'https://in.linkedin.com/in/manthan-chouhan-35ba4b220' : '#'}
+                      target={social === 'LinkedIn' ? '_blank' : undefined}
+                      rel={social === 'LinkedIn' ? 'noopener noreferrer' : undefined}
                       className="w-12 h-12 rounded-full bg-white/5 hover:bg-accent/20 flex items-center justify-center transition-all"
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.95 }}
@@ -164,6 +239,16 @@ function ContactSection({ formData, handleChange, handleSubmit, submitted }) {
                 animate={{ opacity: 1, y: 0 }}
               >
                 ✓ Thanks for reaching out! We'll be in touch soon.
+              </motion.div>
+            )}
+
+            {error && (
+              <motion.div
+                className="p-4 bg-red-500/20 border border-red-500 rounded-lg text-red-400"
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                ✗ Error sending message. Please try again.
               </motion.div>
             )}
 
@@ -223,11 +308,12 @@ function ContactSection({ formData, handleChange, handleSubmit, submitted }) {
 
             <motion.button
               type="submit"
-              className="w-full py-4 bg-accent text-dark font-semibold rounded-lg hover:bg-accent-hover transition-all"
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
+              disabled={loading}
+              className="w-full py-4 bg-accent text-dark font-semibold rounded-lg hover:bg-accent-hover transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              whileHover={{ scale: loading ? 1 : 1.02 }}
+              whileTap={{ scale: loading ? 1 : 0.98 }}
             >
-              Send Message
+              {loading ? 'Sending...' : 'Send Message'}
             </motion.button>
           </motion.form>
         </div>
@@ -256,24 +342,24 @@ function FormField({ label, name, type = 'text', value, onChange, required }) {
 function LocationsSection() {
   const locations = [
     {
-      city: 'New York',
+      city: 'Indore',
       region: 'Headquarters',
-      address: '123 Creative Street, New York, NY 10001',
-      phone: '+1 (555) 123-4567',
+      address: 'MIG Colony, B159 Ground Floor, Indore',
+      phone: '+91 9009855911',
       image: 'https://picsum.photos/600/400?random=25'
     },
     {
-      city: 'San Francisco',
-      region: 'West Coast',
-      address: '456 Innovation Ave, San Francisco, CA 94105',
-      phone: '+1 (555) 987-6543',
+      city: 'Mumbai',
+      region: 'West Office',
+      address: 'Commercial Hub, Mumbai',
+      phone: '+91 9009855911',
       image: 'https://picsum.photos/600/400?random=26'
     },
     {
-      city: 'London',
-      region: 'Europe',
-      address: '789 Design Street, London, UK EC1A 1BB',
-      phone: '+44 (0) 20 1234 5678',
+      city: 'Delhi',
+      region: 'North Office',
+      address: 'Tech Park, New Delhi',
+      phone: '+91 9009855911',
       image: 'https://picsum.photos/600/400?random=27'
     }
   ]
