@@ -419,22 +419,18 @@ function AboutPreview({ scrollRef }) {
               creating world-class digital experiences.
             </p>
             <p className="text-gray-400 mb-8">
-              Founded in 2018, iMann has worked with over 100+ companies globally, delivering 
+              Founded in 2025, iMann has worked with over 3+ companies globally, delivering 
               innovative solutions that drive real business results.
             </p>
 
             <div className="grid grid-cols-3 gap-8 mb-8">
               <div>
-                <p className="text-3xl font-bold text-accent">100+</p>
+                <p className="text-3xl font-bold text-accent">3+</p>
                 <p className="text-gray-400">Projects Completed</p>
               </div>
               <div>
-                <p className="text-3xl font-bold text-accent">50+</p>
+                <p className="text-3xl font-bold text-accent">5+</p>
                 <p className="text-gray-400">Team Members</p>
-              </div>
-              <div>
-                <p className="text-3xl font-bold text-accent">15+</p>
-                <p className="text-gray-400">Years Experience</p>
               </div>
             </div>
 

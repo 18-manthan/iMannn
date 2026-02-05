@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import nodemailer from 'nodemailer'
 import express from 'express'
 import cors from 'cors'
@@ -16,6 +17,8 @@ const transporter = nodemailer.createTransport({
   }
 })
 
+const contactRecipient = process.env.CONTACT_RECIPIENT || 'manthanchouhan18@gmail.com'
+
 app.post('/api/send-email', async (req, res) => {
   try {
     const { name, email, company, message } = req.body
@@ -28,7 +31,7 @@ app.post('/api/send-email', async (req, res) => {
     // Send email to company
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
-      to: 'manthanchouhan18@gmail.com',
+      to: contactRecipient,
       subject: `New Contact Form Submission from ${name}`,
       html: `
         <h2>New Contact Form Submission</h2>

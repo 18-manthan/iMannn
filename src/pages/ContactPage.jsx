@@ -32,44 +32,15 @@ export default function ContactPage({ setIsLoading }) {
         return
       }
 
-      // Send via Discord Webhook (as backup storage)
-      const webhookUrl = 'https://discord.com/api/webhooks/1324567890123456789/xXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXxXx'
-      
-      const embed = {
-        title: '📬 New Contact Form Submission',
-        color: 65280,
-        fields: [
-          { name: 'Name', value: formData.name, inline: true },
-          { name: 'Email', value: formData.email, inline: true },
-          { name: 'Company', value: formData.company || 'Not specified', inline: true },
-          { name: 'Message', value: formData.message || 'No message' }
-        ],
-        timestamp: new Date().toISOString()
-      }
-
-      // Try webhook
-      try {
-        await fetch(webhookUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ embeds: [embed] })
-        })
-      } catch (e) {
-        console.log('Webhook backup noted')
-      }
-
-      // Primary: Send via FormSubmit (completely free, no auth needed)
-      const formSubmitData = new FormData()
-      formSubmitData.append('name', formData.name)
-      formSubmitData.append('email', formData.email)
-      formSubmitData.append('company', formData.company)
-      formSubmitData.append('message', formData.message)
-      formSubmitData.append('_captcha', 'false')
-      formSubmitData.append('_next', window.location.href)
-
-      const response = await fetch('https://formsubmit.co/manthanchouhan18@gmail.com', {
+      const response = await fetch('/api/send-email', {
         method: 'POST',
-        body: formSubmitData
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          company: formData.company,
+          message: formData.message
+        })
       })
 
       if (response.ok) {
@@ -347,14 +318,7 @@ function LocationsSection() {
       address: 'MIG Colony, B159 Ground Floor, Indore',
       phone: '+91 9009855911',
       image: 'https://picsum.photos/600/400?random=25'
-    },
-    {
-      city: 'Mumbai',
-      region: 'West Office',
-      address: 'Commercial Hub, Mumbai',
-      phone: '+91 9009855911',
-      image: 'https://picsum.photos/600/400?random=26'
-    },
+    },  
     {
       city: 'Delhi',
       region: 'North Office',
